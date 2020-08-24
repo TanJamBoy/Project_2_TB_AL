@@ -12,7 +12,7 @@ const db = require("./models");
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static("public"));
+app.use(express.static("public/assets"));
 
 // We need to use sessions to keep track of our user's login status
 app.use(
@@ -29,14 +29,11 @@ app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 
 // Requiring our routes
-// const routes = require("./controllers/game_controller");
+require("./controllers/game_controller")(app);
 
-// app.use(routes);
+//app.use(routes);
 
 // Routes
-app.get("/login", function(req, res) {
-  res.render("login")
-});
 
 // Syncing our database and logging a message to the user upon success
 db.sequelize.sync().then(() => {
