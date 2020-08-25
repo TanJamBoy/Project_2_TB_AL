@@ -22,7 +22,7 @@ const controller = (app) => {
         }
         res.render("login")
     });
-    app.get("/game", (req, res) => {
+    app.get("/game", isAuthenticated, (req, res) => {
         // If the user already has an account send them to the members page
         res.render("game")
     });
@@ -80,6 +80,22 @@ const controller = (app) => {
                 id: req.user.id
             });
         }
+    });
+
+    app.post("/api/character", (req, res) => {
+        db.Character.create({
+            level: req.body.level,
+            x_position: req.body.x_position,
+            y_position: req.body.y_position,
+            UserId: req.body.UserId
+        });
+    });
+
+    app.get("/api/character/:UserId", (req, res) => {
+        let id = req.params.UserId;
+        db.Character.findOne({ UserId: id }).then(data => {
+            res.json(data);
+        })
     });
     //end of api routes
 };

@@ -26,6 +26,7 @@
             this.load.image('tileset', 'gameAssets/basicTileSet.png');
             this.load.tilemapTiledJSON('map', 'GameAssets/map.json');
             this.load.image('sword', "gameAssets/Item__01.png");
+            loadUserData();
         };
 
         function create() {
@@ -167,6 +168,14 @@
                     });
                 };
             };
+        };
+
+        function loadUserData() {
+            let character = JSON.parse(sessionStorage.getItem('character'));
+        };
+
+        function saveUserData() {
+            $.put("/api/character")
         };
 
     </script>
