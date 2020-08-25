@@ -1,0 +1,172 @@
+<script type="text/javascript">
+
+        let config = {
+            type: Phaser.AUTO,
+            width: 800,
+            height: 600,
+            zoom: 2,
+            physics: {
+                default: 'arcade',
+                arcade: {
+                    gravity: { y: 0 },
+                    debug: true
+                }
+            },
+            scene: {
+                preload: preload,
+                create: create,
+                update: update
+            }
+        };
+
+        let game = new Phaser.Game(config);
+
+        function preload() {
+            this.load.image('player', 'gameAssets/player.png');
+            this.load.image('tileset', 'gameAssets/basicTileSet.png');
+            this.load.tilemapTiledJSON('map', 'GameAssets/map.json');
+            this.load.image('sword', "gameAssets/Item__01.png");
+        };
+
+        function create() {
+
+            //create BG
+            let map = this.make.tilemap({ key: 'map' });
+
+            let tiles = map.addTilesetImage('basicTileSet', 'tileset');
+
+            let grass = map.createStaticLayer('Grass', tiles, 0, 0);
+            let water = map.createStaticLayer('Water', tiles, 0, 0);
+            let sand = map.createStaticLayer('Sand', tiles, 0, 0);
+            let path = map.createStaticLayer('Path', tiles, 0, 0);
+            water.setCollisionByExclusion(-1);
+
+            //create player
+            //this.player = this.physics.add.sprite(0, 0, 'player');
+
+            this.player = new Player(this, 0, 0, 'player', 'name');
+
+            //creates sword
+            this.sword = new Weapon(this, 0, 0, 'sword', '25', 'Sword', this.player).setOrigin(1, 1);
+
+            //gives sword to player
+            this.player.setWeapon(this.sword);
+
+            //creates world bounds
+            this.physics.world.bounds.width = map.widthInPixels;
+            this.physics.world.bounds.height = map.heightInPixels;
+
+            //creates arrow key inputs
+            this.cursors = this.input.keyboard.createCursorKeys();
+
+            //create sword
+            //this.sword = this.physics.add.sprite(this.player.x, this.player.y, 'sword').setOrigin(1, 1);
+
+            //create container
+            this.character = this.add.container(150, 120);
+            this.character.setSize(16, 16);
+
+            //add sword and character to conatiner
+            this.character.add(this.player);
+            this.character.add(this.sword);
+
+            //add collision to container
+            this.physics.world.enable(this.character);
+
+            //makes camera follow player
+            this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+            this.cameras.main.startFollow(this.character);
+            this.cameras.main.roundPixels = true;
+
+            //add collision to water
+            this.physics.add.collider(this.character, water);
+
+            //add collision to world bounds, makes it so player cannot attack till attack is finished
+            this.character.body.setCollideWorldBounds(true);
+            this.character.isAttacking = false;
+        };
+
+        function update() {
+            //player controls
+            this.character.body.setVelocity(0);
+
+            if (this.cursors.left.isDown) {
+                this.character.body.setVelocityX(-100);
+                this.sword.angle = 270;
+            } else if (this.cursors.right.isDown) {
+                this.character.body.setVelocityX(100);
+                this.sword.angle = 90;
+            };
+
+            if (this.cursors.up.isDown) {
+                this.character.body.setVelocityY(-100);
+                this.sword.angle = 0;
+            } else if (this.cursors.down.isDown) {
+                this.character.body.setVelocityY(100);
+                this.sword.angle = 180;
+            };
+
+            this.input.keyboard.on("keydown", (e) => {
+                if(e.code == "Space" && this.character.isAttacking === false) {
+                    this.character.isAttacking = true;
+                    this.tweens.add({
+                        targets: this.sword,
+                        props: { angle: this.sword.angle + 90 },
+                        duration: 250,
+                        yoyo: false,
+                        onComplete: () => {
+                            this.sword.angle = this.sword.angle - 90;
+                            this.character.isAttacking = false;
+                        }
+                    });
+                };
+            });
+        };
+
+        class Player extends Phaser.Physics.Arcade.Sprite {
+            constructor(scene, x, y, texture, username, weapon = null) {
+                super(scene, x, y, texture);
+                this.isAttacking = false;
+                this.isAlive = true;
+                this.hp = 100;
+                this.xCords = x;
+                this.yCords = y;
+                this.name = username;
+                this.weapon = weapon;
+            };
+
+            setWeapon(weapon) {
+                this.weapon = weapon;
+            };
+
+            attack() {
+                
+            };
+        };
+
+        class Weapon extends Phaser.Physics.Arcade.Sprite {
+            constructor(scene, x, y, texture, attack, name, character) {
+                super(scene, x, y, texture);
+                this.attack = attack;
+                this.name = name;
+                this.character = character;
+            };
+
+            swing() {
+                if (this.isAttacking === false) {
+                    this.character.isAttacking = true;
+                    this.tweens.add({
+                        targets: this.sword,
+                        props: { angle: this.sword.angle + 90 },
+                        duration: 250,
+                        yoyo: false,
+                        onComplete: () => {
+                            this.sword.angle = this.sword.angle - 90;
+                            this.character.isAttacking = false;
+                        }
+                    });
+                };
+            };
+        };
+
+    </script>
