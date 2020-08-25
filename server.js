@@ -36,7 +36,8 @@ require("./controllers/game_controller")(app);
 // Routes
 
 // Syncing our database and logging a message to the user upon success
-db.sequelize.sync().then(() => {
+//remove force true once models are set up
+db.sequelize.sync({force:true}).then(() => {
   app.listen(PORT, () => {
     console.log(
       "==> 🌎  Listening on port %s. Visit http://localhost:%s/ in your browser.",
