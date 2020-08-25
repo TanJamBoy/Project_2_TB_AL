@@ -29,6 +29,17 @@ $(document).ready(() => {
       password: password
     })
       .then(() => {
+        let userId;
+        $.get("/api/user_data").then(data => {
+          userId = data.id;
+        }).then(() => {
+          $.post("/api/character", {
+            level: 1,
+            x_position: 0,
+            y_position: 0,
+            UserId: userId
+          });
+        });
         window.location.replace("/members");
         // If there's an error, handle it by throwing up a bootstrap alert
       })
