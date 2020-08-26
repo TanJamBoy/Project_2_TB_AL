@@ -90,11 +90,25 @@
             saveButton.setInteractive();
             saveButton.on('pointerdown', () => { 
                 console.log(`X CORD: ${this.character.x} Y CORD: ${this.character.y}`); 
+                console.log(this.character); 
+                console.log(this); 
+
+            //create an object with players save data
                 let save = {
+                    level: this.level,
                     x_position: this.character.x,
                     y_position: this.character.y,
+                    //weapon: this.player.weapon.name,
+                    //hp: this.player.hp
+                    UserId: 1,
                 };
-                console.log(save)            
+                console.log(save)
+
+                $.ajax({
+                    type: 'PUT',
+                    url: '/api/character/:UserId',
+                    data: save
+                });            
             });
             //keeps save button fixed to Top right corner
             saveButton.setScrollFactor(0,0);
