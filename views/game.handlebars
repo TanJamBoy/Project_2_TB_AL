@@ -28,7 +28,7 @@
             this.load.image('sword', "gameAssets/Item__01.png");
             loadUserData();
         };
-
+        let saveButton;
         function create() {
 
             //create BG
@@ -46,7 +46,6 @@
             //this.player = this.physics.add.sprite(0, 0, 'player');
 
             this.player = new Player(this, 0, 0, 'player', 'name');
-
             //creates sword
             this.sword = new Weapon(this, 0, 0, 'sword', '25', 'Sword', this.player).setOrigin(1, 1);
 
@@ -85,6 +84,20 @@
             //add collision to world bounds, makes it so player cannot attack till attack is finished
             this.character.body.setCollideWorldBounds(true);
             this.character.isAttacking = false;
+
+            //saving player button
+            saveButton = this.add.text(405,18, 'Save Game', {fill: '#0f0'});
+            saveButton.setInteractive();
+            saveButton.on('pointerdown', () => { 
+                console.log(`X CORD: ${this.character.x} Y CORD: ${this.character.y}`); 
+                let save = {
+                    x_position: this.character.x,
+                    y_position: this.character.y,
+                };
+                console.log(save)            
+            });
+            //keeps save button fixed to Top right corner
+            saveButton.setScrollFactor(0,0);
         };
 
         function update() {
@@ -143,6 +156,7 @@
             attack() {
                 
             };
+
         };
 
         class Weapon extends Phaser.Physics.Arcade.Sprite {
@@ -174,8 +188,7 @@
             let character = JSON.parse(sessionStorage.getItem('character'));
         };
 
-        function saveUserData() {
-            $.put("/api/character")
-        };
 
     </script>
+
+    
