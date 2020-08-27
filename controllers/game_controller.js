@@ -91,6 +91,18 @@ const controller = (app) => {
         });
     });
 
+    app.put("/api/character/:UserId", (req, res) => {
+        let id = req.body.UserId;
+        db.Character.update({
+            level: req.body.level,
+            x_position: req.body.x_position,
+            y_position: req.body.y_position,
+            UserId: req.body.UserId
+        },{
+            where:{UserId: id}
+        })
+    });
+
     app.get("/api/character/:UserId", (req, res) => {
         let id = req.params.UserId;
         db.Character.findOne({ UserId: id }).then(data => {
