@@ -32,12 +32,14 @@ $(document).ready(() => {
         let userId;
         $.get("/api/user_data").then(data => {
           userId = data.id;
+          let name = data.email;
+
         }).then(() => {
           $.post("/api/character", {
             level: 1,
             x_position: 150,
             y_position: 120,
-            UserId: userId
+            UserId: userId,
           });
         });
         window.location.replace("/members");
