@@ -20,17 +20,16 @@
         };
 
         let game = new Phaser.Game(config);
-
-        function preload() {
+        async function preload() {
             this.load.image('player', 'gameAssets/player.png');
             this.load.image('tileset', 'gameAssets/basicTileSet.png');
-            this.load.tilemapTiledJSON('map', 'GameAssets/map.json');
+            this.load.tilemapTiledJSON('map', 'gameAssets/map.json');
             this.load.image('sword', "gameAssets/Item__01.png");
-            loadUserData();
+            await loadUserData();
         };
         let saveButton;
+        let character;
         function create() {
-
             //create BG
             let map = this.make.tilemap({ key: 'map' });
 
@@ -63,7 +62,7 @@
             //this.sword = this.physics.add.sprite(this.player.x, this.player.y, 'sword').setOrigin(1, 1);
 
             //create container
-            this.character = this.add.container(150, 120);
+            this.character = this.add.container(character.x_position, character.y_position);
             this.character.setSize(16, 16);
 
             //add sword and character to conatiner
@@ -90,17 +89,19 @@
             saveButton.setInteractive();
             saveButton.on('pointerdown', () => { 
                 console.log(`X CORD: ${this.character.x} Y CORD: ${this.character.y}`); 
-                console.log(this.character); 
+                //console.log(character); 
                 console.log(this); 
 
             //create an object with players save data
                 let save = {
-                    level: this.level,
+                    level: character.level,
                     x_position: this.character.x,
                     y_position: this.character.y,
-                    //weapon: this.player.weapon.name,
-                    //hp: this.player.hp
-                    UserId: 1,
+                    isAlive: this.player.isAlive,
+                    hp: this.player.hp,
+                    UserId: character.id
+                    //UserId: 1
+
                 };
                 console.log(save)
 
@@ -199,10 +200,19 @@
         };
 
         function loadUserData() {
-            let character = JSON.parse(sessionStorage.getItem('character'));
+            let userId;
+            $.get("/api/user_data").then(data => {
+                console.log(data);
+                userId = data.id;
+                $.get("/api/character/" + userId).then(data => {
+                console.log(data);
+                sessionStorage.setItem('character', JSON.stringify(data));
+
+                character = JSON.parse(sessionStorage.getItem('character'));
+                $("#level").text(character.level);
+                });
+            });
         };
-
-
     </script>
 
     
