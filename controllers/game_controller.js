@@ -105,7 +105,8 @@ const controller = (app) => {
 
     app.get("/api/character/:UserId", (req, res) => {
         let id = req.params.UserId;
-        db.Character.findOne({ UserId: id }).then(data => {
+        console.log(id);
+        db.Character.findOne({ where: {UserId: id} }).then(data => {
             res.json(data);
         })
     });
