@@ -15,9 +15,9 @@ const controller = (app) => {
         if (req.user) {
             console.log("req.user is not null");
             console.log(isAuthenticated);
-            res.redirect("/members");
+            return res.redirect("/members");
         }
-        res.render("signup")
+        return res.render("signup")
     });
 
     app.get("/login", (req, res) => {
