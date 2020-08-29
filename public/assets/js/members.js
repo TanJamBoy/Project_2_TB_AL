@@ -32,3 +32,9 @@ function cutAfterAt(str) {
 }
 
 });
+
+window.onbeforeunload = closingCode;
+function closingCode(){
+   $.get("/logout");
+   return null;
+};
