@@ -1,8 +1,6 @@
 const controller = (app) => {
     // Requiring path to so we can use relative routes to our HTML files
     const path = require("path");
-    console.log("test");
-    console.log(path.resolve());
     const rootDir = path.resolve();
     // Requiring our custom middleware for checking if a user is logged in
     const isAuthenticated = require(rootDir + "/config/middleware/isAuthenticated");
@@ -12,6 +10,8 @@ const controller = (app) => {
     //html routes
     app.get("/", (req, res) => {
         // If the user already has an account send them to the members page
+        console.log("about to authenticate");
+        console.log(req.user);
         if (req.user) {
             res.redirect("/members");
         }
