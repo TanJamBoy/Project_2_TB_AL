@@ -13,6 +13,8 @@ const controller = (app) => {
         console.log("about to authenticate");
         console.log(req.user);
         if (req.user) {
+            console.log("req.user is not null");
+            console.log(isAuthenticated);
             res.redirect("/members");
         }
         res.render("signup")
