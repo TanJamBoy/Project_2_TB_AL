@@ -18,6 +18,11 @@ $(document).ready(() => {
 
       $("#level").text(character.level);
       $("#hp").text(character.hp);
+      if(character.isAlive){
+        character.isAlive = "Yes"
+      }else {
+        character.isAlive = "No"
+      };
       $("#alive").text(character.isAlive);
     });
   });

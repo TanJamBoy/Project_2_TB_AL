@@ -85,7 +85,7 @@
             this.character.isAttacking = false;
 
             //saving player button
-            saveButton = this.add.text(405,18, 'Save Game', {fill: '#0f0'});
+            saveButton = this.add.text(40,5, 'Save Game', {fill: '#0f0', border-style: 'dotted'});
             saveButton.setInteractive();
             saveButton.on('pointerdown', () => { 
                 console.log(`X CORD: ${this.character.x} Y CORD: ${this.character.y}`); 
@@ -109,10 +109,19 @@
                     type: 'PUT',
                     url: '/api/character/:UserId',
                     data: save
-                });            
+                });  
             });
             //keeps save button fixed to Top right corner
             saveButton.setScrollFactor(0,0);
+            
+            //exit game button
+            exitGame = this.add.text(40,25, 'Exit Game', {fill: '#FF0000'});
+            exitGame.setInteractive();
+            exitGame.on('pointerdown', () => {
+            window.open("/members", "_self");
+            });
+            exitGame.setScrollFactor(0,0);
+
         };
 
         function update() {
