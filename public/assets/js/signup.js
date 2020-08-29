@@ -28,21 +28,22 @@ $(document).ready(() => {
       email: email,
       password: password
     })
-      .then(() => {
+      .done(() => {
         let userId;
-        $.get("/api/user_data").then(data => {
+        $.get("/api/user_data").done(data => {
           userId = data.id;
           let name = data.email;
 
-        }).then(() => {
+        }).done(() => {
           $.post("/api/character", {
             level: 1,
             x_position: 175,
             y_position: 165,
             UserId: userId,
+          }).done(() => {
+            window.location.replace("/members");
           });
         });
-        window.location.replace("/members");
         // If there's an error, handle it by throwing up a bootstrap alert
       })
       .catch(handleLoginErr);

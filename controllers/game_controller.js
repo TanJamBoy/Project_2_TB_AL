@@ -10,11 +10,7 @@ const controller = (app) => {
     //html routes
     app.get("/", (req, res) => {
         // If the user already has an account send them to the members page
-        console.log("about to authenticate");
-        console.log(req.user);
         if (req.user) {
-            console.log("req.user is not null");
-            console.log(isAuthenticated);
             return res.redirect("/members");
         }
         return res.render("signup")
@@ -94,6 +90,7 @@ const controller = (app) => {
             y_position: req.body.y_position,
             UserId: req.body.UserId
         });
+        res.end();
     });
 
     app.put("/api/character/:UserId", (req, res) => {
@@ -106,6 +103,7 @@ const controller = (app) => {
         },{
             where:{UserId: id}
         })
+        res.end();
     });
 
     app.get("/api/character/:UserId", (req, res) => {
