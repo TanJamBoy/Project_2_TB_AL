@@ -5,6 +5,7 @@
             width: 800,
             height: 600,
             zoom: 2,
+            pixelArt: true,
             physics: {
                 default: 'arcade',
                 arcade: {
@@ -20,12 +21,12 @@
         };
 
         let game = new Phaser.Game(config);
-        async function preload() {
+        function preload() {
             this.load.image('player', 'gameAssets/player.png');
-            this.load.image('tileset', 'gameAssets/basicTileSet.png');
-            this.load.tilemapTiledJSON('map', 'gameAssets/map.json');
+            this.load.image('tileset', 'gameAssets/ashlands_tileset.png');
+            this.load.tilemapTiledJSON('map', 'gameAssets/newMap.json');
             this.load.image('sword', "gameAssets/Item__01.png");
-            await loadUserData();
+            loadUserData();
         };
         let saveButton;
         let character;
@@ -33,18 +34,20 @@
             //create BG
             let map = this.make.tilemap({ key: 'map' });
 
-            let tiles = map.addTilesetImage('basicTileSet', 'tileset');
+            let tiles = map.addTilesetImage('ashlands_tileset', 'tileset');
 
-            let grass = map.createStaticLayer('Grass', tiles, 0, 0);
-            let water = map.createStaticLayer('Water', tiles, 0, 0);
-            let sand = map.createStaticLayer('Sand', tiles, 0, 0);
+            let dirt = map.createStaticLayer('Dirt', tiles, 0, 0);
+            let lava = map.createStaticLayer('Lava', tiles, 0, 0);
             let path = map.createStaticLayer('Path', tiles, 0, 0);
-            water.setCollisionByExclusion(-1);
+            let dirter = map.createStaticLayer('Dirter', tiles, 0, 0);
+            let objects = map.createStaticLayer('Objects', tiles, 0, 0);
+            let details = map.createStaticLayer('Details', tiles, 0, 0);
+            lava.setCollisionByExclusion(-1);
+            objects.setCollisionByExclusion(-1);
 
-            //create player
-            //this.player = this.physics.add.sprite(0, 0, 'player');
-
+            //creates player
             this.player = new Player(this, 0, 0, 'player', 'name');
+
             //creates sword
             this.sword = new Weapon(this, 0, 0, 'sword', '25', 'Sword', this.player).setOrigin(1, 1);
 
@@ -57,9 +60,6 @@
 
             //creates arrow key inputs
             this.cursors = this.input.keyboard.createCursorKeys();
-
-            //create sword
-            //this.sword = this.physics.add.sprite(this.player.x, this.player.y, 'sword').setOrigin(1, 1);
 
             //create container
             this.character = this.add.container(character.x_position, character.y_position);
@@ -77,22 +77,21 @@
             this.cameras.main.startFollow(this.character);
             this.cameras.main.roundPixels = true;
 
-            //add collision to water
-            this.physics.add.collider(this.character, water);
+            //add collision to water and objects
+            this.physics.add.collider(this.character, lava);
+            this.physics.add.collider(this.character, objects);
 
             //add collision to world bounds, makes it so player cannot attack till attack is finished
             this.character.body.setCollideWorldBounds(true);
             this.character.isAttacking = false;
 
             //saving player button
-            saveButton = this.add.text(405,18, 'Save Game', {fill: '#0f0'});
+            saveButton = this.add.text(40,5, 'Save Game', {fill: '#0f0'});
             saveButton.setInteractive();
-            saveButton.on('pointerdown', () => { 
+            saveButton.on('pointerdown', () => {
                 console.log(`X CORD: ${this.character.x} Y CORD: ${this.character.y}`); 
-                //console.log(character); 
-                console.log(this); 
 
-            //create an object with players save data
+                //create an object with players save data
                 let save = {
                     level: character.level,
                     x_position: this.character.x,
@@ -100,19 +99,29 @@
                     isAlive: this.player.isAlive,
                     hp: this.player.hp,
                     UserId: character.id
-                    //UserId: 1
-
                 };
-                console.log(save)
+
+                console.log(save);
 
                 $.ajax({
                     type: 'PUT',
                     url: '/api/character/:UserId',
                     data: save
-                });            
+                });
+
+                saveUserData(this.character, this.player);
             });
             //keeps save button fixed to Top right corner
             saveButton.setScrollFactor(0,0);
+            
+            //exit game button
+            exitGame = this.add.text(40,25, 'Exit Game', {fill: '#FF0000'});
+            exitGame.setInteractive();
+            exitGame.on('pointerdown', () => {
+            window.open("/members", "_self");
+            });
+            exitGame.setScrollFactor(0,0);
+
         };
 
         function update() {
@@ -167,11 +176,6 @@
             setWeapon(weapon) {
                 this.weapon = weapon;
             };
-
-            attack() {
-                
-            };
-
         };
 
         class Weapon extends Phaser.Physics.Arcade.Sprite {
@@ -200,19 +204,19 @@
         };
 
         function loadUserData() {
-            let userId;
-            $.get("/api/user_data").then(data => {
-                console.log(data);
-                userId = data.id;
-                $.get("/api/character/" + userId).then(data => {
-                console.log(data);
-                sessionStorage.setItem('character', JSON.stringify(data));
+            character = JSON.parse(sessionStorage.getItem('character'));
+        };
 
-                character = JSON.parse(sessionStorage.getItem('character'));
-                $("#level").text(character.level);
-                });
-            });
+        function saveUserData(savC, savP) {
+            character = {
+                level: character.level,
+                x_position: savC.x,
+                y_position: savC.y,
+                isAlive: savP.isAlive,
+                hp: savP.hp,
+                UserId: character.id
+            };
+
+            sessionStorage.setItem('character', JSON.stringify(character));
         };
     </script>
-
-    

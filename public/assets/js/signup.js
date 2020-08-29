@@ -37,8 +37,8 @@ $(document).ready(() => {
         }).then(() => {
           $.post("/api/character", {
             level: 1,
-            x_position: 150,
-            y_position: 120,
+            x_position: 175,
+            y_position: 165,
             UserId: userId,
           });
         });
