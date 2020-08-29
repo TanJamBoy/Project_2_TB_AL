@@ -16,7 +16,7 @@ app.use(express.static("public/assets"));
 
 // We need to use sessions to keep track of our user's login status
 app.use(
-  session({ secret: "keyboard cat", resave: true, saveUninitialized: false })
+  session({ secret: "keyboard cat", resave: true, saveUninitialized: true, cookie: { path: '/', httpOnly: true, secure: false, maxAge: null, expires: Date.now() } })
 );
 app.use(passport.initialize());
 app.use(passport.session());
