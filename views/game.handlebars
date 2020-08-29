@@ -219,10 +219,4 @@
 
             sessionStorage.setItem('character', JSON.stringify(character));
         };
-
-        window.onbeforeunload = closingCode;
-        function closingCode(){
-            $.get("/logout");
-            return null;
-        };
     </script>
